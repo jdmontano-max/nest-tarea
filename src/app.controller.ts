@@ -1,39 +1,72 @@
-import { Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
-import { AppService } from './app.service';
-import { PROPERTY_DEPS_METADATA } from '@nestjs/common/constants';
-import path from 'path';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
-
-  @Get("/users")
-  getUsers(): string {
-    return this.appService.getUsers();
+  getHello(): any {
+    throw new Error('Method not implemented.');
+  }
+  @Post('users')
+  createUser(
+    @Body() data: { nombre: string; email: string; password: string },
+  ) {
+    return {
+      mensaje: 'Usuario creado',
+      datos: data,
+    };
   }
 
-  @Get("/users/:id")
-  getunusuario(@Param("id") id: string): string {
-    return this.appService.getunusuario(id);
+  @Get('users')
+  getUsers() {
+    return 'Lista de usuarios';
   }
 
-  @Post("/users")
-  post(): string {
-    return this.appService.crear();
+  @Get('users/:id')
+  getUser(@Param('id') id: string) {
+    return `Usuario ${id}`;
   }
 
-  @Put("/users/:id")
-  putunusuario(@Param("id") id: string): string {
-    return this.appService.putunusuario(id);
+  @Put('users/:id')
+  updateUser(
+    @Param('id') id: string,
+    @Body()
+    data: {
+      nombre: string;
+      email: string;
+      password: string;
+    },
+  ) {
+    return {
+      mensaje: `Usuario ${id} actualizado completamente`,
+      datos: data,
+    };
   }
 
-  @Patch("/users/:id")
-  patchUser(@Param("id") id: string): string {
-    return this.appService.patchUser(id);
+  @Patch('users/:id')
+  updateUserPartial(
+    @Param('id') id: string,
+    @Body()
+    data: {
+      nombre?: string;
+      email?: string;
+      password?: string;
+    },
+  ) {
+    return {
+      mensaje: `Usuario ${id} actualizado parcialmente`,
+      datos: data,
+    };
   }
-
-  @Delete("/users/:id")
-  deleteusuario(@Param("id") id: string): string {
-    return this.appService.deleteusuario(id);
+  @Delete('users/:id')
+  deleteUser(@Param('id') id: string) {
+    return `Usuario ${id} eliminado`;
   }
 }
