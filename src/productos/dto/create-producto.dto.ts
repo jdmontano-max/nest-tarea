@@ -4,4 +4,3 @@ export class CreateProductoDto {
   precio: number | undefined;
   stock: number | undefined;
 }
- 

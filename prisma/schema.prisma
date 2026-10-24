@@ -14,3 +14,36 @@ model Usuario {
   correo   String @unique
   password String
 }
+
+model Producto {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pedidos     ProductoPedido[]
+}
+
+model Pedido {
+  id        Int      @id @default(autoincrement())
+  cliente   String
+  estado    String
+  createdAt DateTime @default(now())
+
+  productos ProductoPedido[]
+}
+
+model ProductoPedido {
+  id         Int @id @default(autoincrement())
+  idpedido   Int
+  idproducto Int
+  cantidad   Int
+
+  pedido     Pedido   @relation(fields: [idpedido], references: [id])
+  producto   Producto @relation(fields: [idproducto], references: [id])
+
+  @@unique([idpedido, idproducto])
+}

@@ -1,33 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 
 @Injectable()
 export class ProductosService {
-  create(createProductoDto: CreateProductoDto) {
-    return {
-      mensaje: 'Producto creado correctamente',
-      datos: createProductoDto,
+  constructor(private prisma: PrismaService) {}
+
+  create(data: CreateProductoDto) {
+    if (data.nombre === undefined) {
+      throw new BadRequestException('El nombre es requerido');
     }
+
+    const sanitizedData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    ) as Partial<CreateProductoDto>;
+
+    return this.prisma.producto.create({
+      data: {
+        ...sanitizedData,
+        nombre: data.nombre,
+      } as any,
+    });
   }
-  
 
   findAll() {
-    return `lista de productos`;
+    return this.prisma.producto.findMany();
   }
 
   findOne(id: number) {
-    return `productos con id ${id}`;
+    return this.prisma.producto.findUnique({ where: { id } });
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return{
-      mensaje: `producto ${id} actualizado correctamente`,
-      datos: updateProductoDto,
-    }
+  update(id: number, data: UpdateProductoDto) {
+    return this.prisma.producto.update({ where: { id }, data });
   }
 
   remove(id: number) {
-    return `producto ${id} eliminado`;
+    return this.prisma.producto.delete({ where: { id } });
   }
 }
